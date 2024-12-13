@@ -60,7 +60,10 @@ float obterValorDiaria(int numeroQuarto) {
 void Estadia::cadastrarEstadia() {
     verificarDiretorio();
     int codigoCliente, codigoFuncionario, quantidadeHospedes, dataEntrada, dataSaida;
-    int numeroQuarto;
+    int numeroQuarto, codigoEstadia;
+
+    cout << "Digite o código da estadia: ";
+    cin >> codigoEstadia;
 
     cout << "Digite o código do cliente: ";
     cin >> codigoCliente;
@@ -101,6 +104,7 @@ void Estadia::cadastrarEstadia() {
     codigo_funcionario = codigoFuncionario;
     quant_diarias = calcularDiarias(dataEntrada, dataSaida);
     valor_diaria = obterValorDiaria(numeroQuarto);
+    codigo = codigoEstadia;
 
     estadias.push_back(*this);
     salvarEstadias();
@@ -220,31 +224,57 @@ float Estadia::calcularValorTotal() const {
 
 void Estadia::baixarValorPago() {
 
+    verificarDiretorio();
+
     int codigoEstadia;
     cout << "Digite o código da estadia: ";
     cin >> codigoEstadia;
 
-    fstream arquivo("estadias.dat", ios::in | ios::out | ios::binary);
+    fstream arquivo(REPOSITORIO + "estadias.dat", ios::in | ios::out | ios::binary);
     if (!arquivo.is_open()) {
         cout << "Erro ao abrir o arquivo de estadias.\n";
         return;
     }
+
+    Estadia estadia;
+    bool estadiaEncontrada = false;
+
+    while (arquivo.read(reinterpret_cast<char*>(&estadia), sizeof(Estadia))) {
+        if (estadia.codigo == codigoEstadia) {
+            estadiaEncontrada = true;
+
+            cout << "Valor total a ser pago: R$ " << estadia.calcularValorTotal() << endl;
+
+            cout << "Digite o valor pago: ";
+            float valorPago;
+            cin >> valorPago;
+
+            estadia.valor_diaria = valorPago / estadia.quant_diarias;
+            arquivo.seekp(-static_cast<int>(sizeof(Estadia)), ios::cur);
+            arquivo.write(reinterpret_cast<const char*>(&estadia), sizeof(Estadia));
+            cout << "Estadia atualizada com sucesso!\n";
+            break;
+        }
+    }
+
+        if (!estadiaEncontrada) {
+        cout << "Estadia com código " << codigoEstadia << " não encontrada.\n";
+    }
+
+    arquivo.close();
 }
 
-#include "estadia.h"
-#include <iostream>
-#include <fstream>
-
-using namespace std;
 
 void Estadia::calcularValorArrecadadoPorMes() {
+
+    verificarDiretorio();
     int mesDesejado, anoDesejado;
     cout << "Digite o mês (MM): ";
     cin >> mesDesejado;
     cout << "Digite o ano (AAAA): ";
     cin >> anoDesejado;
 
-    ifstream arquivo("estadias.dat", ios::binary);
+    ifstream arquivo(REPOSITORIO + "estadias.dat", ios::binary);
     if (!arquivo.is_open()) {
         cout << "Erro ao abrir o arquivo de estadias.\n";
         return;
