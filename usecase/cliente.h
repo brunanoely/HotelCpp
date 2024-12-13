@@ -13,7 +13,7 @@ private:
     int codigo;
     char nome[50];      
     char endereco[100]; 
-    int telefone;
+    long int telefone;
 
     static set<int> codigosUsados;          
     static vector<Cliente> clientes;       
@@ -28,8 +28,8 @@ public:
     void setNome(const string& n);
     const char* getEndereco() const;
     void setEndereco(const string& e);
-    int getTelefone() const;
-    void setTelefone(int telefone);
+    long int getTelefone() const;
+    void setTelefone(long int telefone);
 
 
     void cadastrarCliente();  

@@ -32,8 +32,8 @@ void Cliente::setEndereco(const string& e) {
     endereco[sizeof(endereco) - 1] = '\0';
 }
 
-int Cliente::getTelefone() const { return telefone; }
-void Cliente::setTelefone(int telefone) { this->telefone = telefone; }
+long int Cliente::getTelefone() const { return telefone; }
+void Cliente::setTelefone(long int telefone) { this->telefone = telefone; }
 
 void Cliente::cadastrarCliente() {
     verificarDiretorio(); 
